@@ -6,21 +6,28 @@ export class SendGridService {
         @Inject('SENDGRID') private readonly sgMail: sgMail.MailService
     ){}
 
-    async wellcomeMail(to: string, subject: string): Promise<void>{
+    async wellcomeMail( to: string,subject: string): Promise<void>{
+        const templateId = "d-8c4aa8bdf6d24112b4f8dddea1f6363f";
+        const senderMail = "jumi.rc@hotmail.com";
 
         const mail = {
             to,
-            from: "jumi.rc@hotmail.com",
+            from: senderMail,
             subject,
-            templateId: "d-8c4aa8bdf6d24112b4f8dddea1f6363",
+            templateId: templateId,
+            dynamicTemplateData: {
+                userName: "Juanma", 
+                userEmail: to,
+            },
         }
         try {
-            await this.sgMail.send(mail); 
+            await this.sgMail.send(mail);
             console.log('Email enviado correctamente');
           } catch (error) {
-            console.error('Error enviando email:', error);
+            console.error('Error enviando email:', error.response.body.errors);
             throw new Error('Error sending email');
           }
+          
     }
     
 }
