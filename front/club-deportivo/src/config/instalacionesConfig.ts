@@ -28,7 +28,7 @@ export interface Instalacion {
     },
     {
       id: "tennis",
-      titulo: "Cancha de Tenis 1",
+      titulo: "Cancha de Tenis",
       descripcion: "Canchas de tenis con superficies de última generación para entrenamiento y competición.",
       imagen: "/images/instalaciones/tennis.jpg",
       detalles: [
@@ -46,20 +46,39 @@ export interface Instalacion {
     },
     {
         id: "Padel",
-        titulo: "Cancha de Tenis",
-        descripcion: "Canchas de tenis con superficies de última generación para entrenamiento y competición.",
-        imagen: "/images/instalaciones/tennis.jpg",
+        titulo: "Cancha de Pádel",
+        descripcion: "Cancha de pádel moderna diseñada para jugadores de todos los niveles, equipada con las mejores instalaciones.",
+        imagen: "/images/instalaciones/padel.jpg",
         detalles: [
-          "Superficie de arcilla sintética",
-          "Iluminación nocturna",
-          "Gradas para espectadores",
-          "Vestuarios individuales"
+          "Superficie sintética de alta calidad",
+          "Cristales templados de seguridad",
+          "Iluminación LED para uso nocturno",
+          "Vestuarios con duchas y lockers"
         ],
         caracteristicas: [
-          "Superficie adaptada a diferentes estilos de juego",
-          "Mantenimiento constante",
-          "Sistemas de riego automático",
-          "Zonas de calentamiento"
+          "Dimensiones reglamentarias",
+          "Mantenimiento diario",
+          "Redes de competición",
+          "Zonas de descanso cercanas"
+        ]
+      },
+      {
+        id: "Natacion",
+        titulo: "Piscina Olímpica",
+        descripcion: "Piscina de medidas olímpicas equipada con tecnología de última generación para entrenamiento y competición.",
+        imagen: "/images/instalaciones/natacion.jpg",
+        detalles: [
+          "Medidas oficiales de 50 metros",
+          "8 carriles demarcados",
+          "Sistema de climatización del agua",
+          "Gradas para espectadores",
+          "Vestuarios modernos con duchas"
+        ],
+        caracteristicas: [
+          "Cronometraje electrónico",
+          "Sistemas de filtración y purificación avanzados",
+          "Iluminación subacuática",
+          "Espacios para calentamiento y recuperación"
         ]
       }
   ];
