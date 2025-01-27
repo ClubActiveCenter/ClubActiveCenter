@@ -77,7 +77,6 @@ const MembershipPlans = () => {
             </div>
           </div>
 
-          {/* Tarjeta Premium */}
           <div className="bg-white text-black rounded-lg shadow-lg p-6 flex flex-col w-80 mx-auto transform transition-transform duration-300 hover:scale-105 hover:opacity-90">
             <h2 className="text-xl font-bold text-center mb-4">PREMIUM</h2>
             <div className="text-center mb-6">
