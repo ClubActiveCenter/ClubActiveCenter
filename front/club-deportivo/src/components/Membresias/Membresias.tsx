@@ -2,28 +2,24 @@ import Image from "next/image";
 
 import React from "react";
 
-
 const MembershipPlans = () => {
   return (
     <div className="bg-black text-white min-h-screen py-12 px-6">
-      {/* Contenedor principal */}
       <div className="max-w-7xl mx-auto">
-        {/* Título e Imagen */}
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-12 mb-12">
-          {/* Texto */}
           <div>
             <h1 className="text-6xl font-bold mb-6 leading-tight">
               Planes y Membresías
             </h1>
-            <p className="text-gray-400 text-lg">
+            <p className="text-white text-lg">
               Maecenas eget condimentum velit, sit amet feugiat lectus. Vivamus
               luctus eros aliquet convallis ultricies. Mauris augue massa.
             </p>
           </div>
-          {/* Imagen */}
+
           <div className="flex justify-center">
             <Image
-              src="/assets/Images/pexels-rick-hadley-1481866149-28380067.jpg"
+              src="https://res.cloudinary.com/dqiehommi/image/upload/v1737837996/pexels-rick-hadley-1481866149-28380067_t30y5a.jpg"
               alt="Entrenador fitness"
               width={450}
               height={450}
@@ -32,9 +28,7 @@ const MembershipPlans = () => {
           </div>
         </div>
 
-        {/* Tarjetas de Membresías */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Tarjeta Básico */}
           <div className="bg-white text-black rounded-lg shadow-lg p-6 flex flex-col w-80 mx-auto transform transition-transform duration-300 hover:scale-105 hover:opacity-90">
             <h2 className="text-xl font-bold text-center mb-4">BÁSICO</h2>
             <div className="text-center mb-6">
@@ -59,7 +53,6 @@ const MembershipPlans = () => {
             </div>
           </div>
 
-          {/* Tarjeta Estandar */}
           <div className="bg-white text-black rounded-lg shadow-lg p-6 flex flex-col w-80 mx-auto transform transition-transform duration-300 hover:scale-105 hover:opacity-90">
             <h2 className="text-xl font-bold text-center mb-4">ESTANDAR</h2>
             <div className="text-center mb-6">
