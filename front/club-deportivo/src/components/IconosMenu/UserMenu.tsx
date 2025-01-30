@@ -1,14 +1,14 @@
+"use client"
+
 import React from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { User } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
-interface UserMenuProps {
-  isAuthenticated: boolean;
-  onLogout?: () => void;
-}
+export function UserMenu() {
+  const { isAuthenticated } = useAuth();
 
-export function UserMenu({ isAuthenticated, onLogout }: UserMenuProps) {
   return (
     <div className="relative z-50 h-full flex items-center">
       <DropdownMenu.Root>
@@ -27,17 +27,18 @@ export function UserMenu({ isAuthenticated, onLogout }: UserMenuProps) {
               {isAuthenticated ? (
                 <>
                   <Link 
-                    href="/profile" 
+                    href="/useDashboard" 
                     className="px-3 py-2 text-sm text-white hover:bg-white/10 rounded-md transition-colors w-full"
                   >
                     Perfil
                   </Link>
-                  <button 
-                    onClick={onLogout} 
-                    className="px-3 py-2 text-sm text-red-400 hover:bg-white/10 text-left rounded-md transition-colors w-full"
+
+                  <Link 
+                    href="/api/auth/logout" 
+                    className="px-3 py-2 text-sm text-white hover:bg-white/10 rounded-md transition-colors w-full"
                   >
-                    Cerrar sesión
-                  </button>
+                    Cerrar sesion
+                  </Link>
                 </>
               ) : (
                 <>
@@ -48,7 +49,7 @@ export function UserMenu({ isAuthenticated, onLogout }: UserMenuProps) {
                     Iniciar sesión
                   </Link>
                   <Link 
-                    href="/register" 
+                    href="/Registro" 
                     className="px-3 py-2 text-sm text-white hover:bg-white/10 rounded-md transition-colors w-full"
                   >
                     Registrarse

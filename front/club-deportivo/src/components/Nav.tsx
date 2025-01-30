@@ -2,18 +2,11 @@ import { navConfig, NavItem } from "@/config/navConfig";
 import Image from "next/image";
 import Link from "next/link";
 import MobileMenuToggle from "./MobileMenuToggle";
-
 import { CartButton } from "./IconosMenu/CartButton";
 import { UserMenu } from "./IconosMenu/UserMenu";
 
 
 export default function Nav() {
-  const isAuthenticated = false; // Esto vendría de tu sistema de autenticación
-
-  const handleLogout = () => {
-    // Tu lógica de logout aquí
-    console.log('Logout');
-  };
 
   return (
     <nav className="sticky top-0 z-50 bg-navbarDefault shadow-navbar">
@@ -67,10 +60,7 @@ export default function Nav() {
           {/* Right side icons */}
           <div className="flex items-center gap-1">
             <CartButton />
-            <UserMenu 
-              isAuthenticated={isAuthenticated}
-              onLogout={handleLogout}
-            />
+            <UserMenu />
             {/* Menu hamburguesa solo visible hasta lg */}
             <div className="lg:hidden ml-1">
               <MobileMenuToggle />
