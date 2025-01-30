@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import {
   FaUser,
   FaCreditCard,
@@ -8,14 +9,33 @@ import {
   FaChevronRight,
   FaBasketballBall,
 } from "react-icons/fa";
+import { getUserById } from "../../service/user";
+import { IUser } from "../../interface/IUser";
+import { IReservasUser } from "../../interface/IReservasUser";
 
-const Dashboard = () => {
+interface UserDashboardProps {
+  userId: string;
+}
+
+const UserDashboard: React.FC<UserDashboardProps> = ({ userId }) => {
+  const [user, setUser] = useState<IUser | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await getUserById(userId);
+      setUser(userData);
+    };
+    fetchUser();
+  }, [userId]);
+
+  // Mientras 'user' sea null, mostrar "Cargando..."
+  if (!user) return <div className="text-white">Cargando...</div>;
+
   return (
     <div className="min-h-screen bg-black text-white flex justify-center items-start">
       <div className="max-w-7xl w-full flex gap-8 p-8 flex-col lg:flex-row">
-        {/* Sidebar Menu */}
         <aside className="w-full lg:w-1/4 bg-white text-black rounded-xl p-6 shadow-md mb-8 lg:mb-0">
-          <h2 className="text-2xl font-bold mb-10">Hola, Pedro</h2>
+          <h2 className="text-2xl font-bold mb-10">Hola, {user.name}</h2>
           <ul className="space-y-6">
             <li className="flex items-center justify-between p-4 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200">
               <div className="flex items-center gap-4">
@@ -26,7 +46,7 @@ const Dashboard = () => {
             </li>
             <li className="flex items-center justify-between p-4 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200">
               <div className="flex items-center gap-4">
-                <FaBasketballBall className="text-lg" /> {/* Ícono de pelota */}
+                <FaBasketballBall className="text-lg" />
                 <span className="font-medium">Planes contratados</span>
               </div>
               <FaChevronRight className="text-lg" />
@@ -63,31 +83,43 @@ const Dashboard = () => {
         </aside>
 
         <main className="w-full lg:w-3/4 bg-gray-200 text-black rounded-xl p-8 shadow-md">
-          <h2 className="text-2xl font-bold mb-8">Productos comprados</h2>
+          <h2 className="text-2xl font-bold mb-8">Reservas</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array(4)
-              .fill(0)
-              .map((_, index) => (
-                <div
-                  key={index}
-                  className="flex items-start gap-6 bg-white p-6 rounded-lg shadow"
-                >
-                  <div className="w-24 h-24 bg-gray-300 rounded"></div>
-                  <div className="flex-1">
-                    <h3 className="font-bold text-lg mb-2">TITULO</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                      Etiam eu turpis molestie, dictum est a, mattis tellus.
-                    </p>
-                    <p className="mt-4 font-bold text-lg">$39.99</p>
+            {user.reservations.length > 0 ? (
+              user.reservations.map(
+                (reservation: IReservasUser, index: number) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-6 bg-white p-6 rounded-lg shadow"
+                  >
+                    <div className="w-24 h-24 bg-gray-300 rounded"></div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-lg mb-2">
+                        Reserva {index + 1}
+                      </h3>
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        Actividad:{" "}
+                        {reservation.activities
+                          .map((activity) => activity.title)
+                          .join(", ")}
+                      </p>
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        Fecha: {reservation.date}
+                      </p>
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        Hora:
+                      </p>
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        Estado:{" "}
+                        {reservation.status ? "Confirmada" : "Pendiente"}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
-          </div>
-          <div className="mt-8 text-center">
-            <button className="bg-black text-white rounded-lg px-8 py-3 hover:bg-gray-800">
-              Ver más
-            </button>
+                )
+              )
+            ) : (
+              <p className="text-gray-600">No tienes reservas disponibles.</p>
+            )}
           </div>
         </main>
       </div>
@@ -95,4 +127,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default UserDashboard;
