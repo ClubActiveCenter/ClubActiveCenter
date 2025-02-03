@@ -28,7 +28,7 @@ export function UserMenu() {
             {user ? (
               <>
                 <Link
-                  href="/profile"
+                  href="/userDashboard"
                   className="block px-3 py-2 hover:bg-gray-700 rounded"
                 >
                   Perfil

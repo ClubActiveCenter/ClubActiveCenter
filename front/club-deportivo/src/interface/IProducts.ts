@@ -12,4 +12,5 @@ export interface IProducts {
   stock: number;
   image: string;
   State: ProductState;
+  quantity: number;
 }

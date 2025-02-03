@@ -49,7 +49,7 @@ const Login = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-900">
       <Link
-        href="/api/auth/login"
+        href="/auth/login"
         className="block px-3 py-2 hover:bg-gray-700 rounded"
       >
         Iniciar sesión

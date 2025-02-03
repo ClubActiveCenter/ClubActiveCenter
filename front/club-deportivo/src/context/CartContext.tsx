@@ -51,26 +51,25 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       console.warn('Producto no disponible');
       return;
     }
-
+  
     setItems(currentItems => {
       const existingItem = currentItems.find(i => i.id === item.id);
       
       if (existingItem) {
-        // Verificar stock antes de incrementar
         if (existingItem.quantity >= item.stock) {
           console.warn('No hay suficiente stock');
           return currentItems;
         }
-        
-        const newItems = currentItems.map(i => 
-          i.id === item.id 
+  
+        const newItems = currentItems.map(i =>
+          i.id === item.id
             ? { ...i, quantity: i.quantity + 1 }
             : i
         );
         localStorage.setItem("cart", JSON.stringify(newItems));
         return newItems;
       }
-
+  
       const newItems = [...currentItems, { ...item, quantity: 1 }];
       localStorage.setItem("cart", JSON.stringify(newItems));
       return newItems;
@@ -78,7 +77,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     
     setIsOpen(true);
   };
-
+  
   const removeItemFromCart = (id: string) => {
     const filtered = items.filter(item => item.id !== id);
     setItems(filtered);

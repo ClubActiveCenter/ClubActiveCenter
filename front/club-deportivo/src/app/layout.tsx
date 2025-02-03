@@ -4,6 +4,7 @@ import { UserProvider } from "@auth0/nextjs-auth0/client";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import { CartProvider } from "@/context/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,9 +32,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <UserProvider>
-          <Nav />
-          {children}
-          <Footer />
+          <CartProvider> 
+            <Nav />
+            {children}
+            <Footer />
+          </CartProvider>
         </UserProvider>
       </body>
     </html>
