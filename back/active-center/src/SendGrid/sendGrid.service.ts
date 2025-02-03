@@ -25,8 +25,9 @@ export class SendGridService {
   }
 
   async reservationMail(
-    user: string, date: 
-    Date, startTime: string, 
+    user: string, 
+    date: Date, 
+    startTime: string, 
     endTime: string, 
     price?: number, 
     spaces?: string, 
