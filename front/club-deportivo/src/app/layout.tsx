@@ -4,7 +4,7 @@ import { UserProvider } from "@auth0/nextjs-auth0/client";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import { CartProvider } from "@/context/CartContext";
+import { AuthProvider } from "@/context/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,13 +31,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <UserProvider>
-          <CartProvider> 
+        <AuthProvider>
+          {" "}
+          {/* Agrega AuthProvider aquí */}
+          <UserProvider>
             <Nav />
             {children}
             <Footer />
-          </CartProvider>
-        </UserProvider>
+          </UserProvider>
+        </AuthProvider>
       </body>
     </html>
   );
