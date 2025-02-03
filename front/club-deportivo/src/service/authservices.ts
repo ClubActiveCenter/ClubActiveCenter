@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ILogin } from "@/interface/ILogin";
 import axios from "axios";
 
@@ -14,8 +13,7 @@ export const AuthService = {
       });
 
       return response.data;
-    } catch (error: any) {
-      throw new (error) 
+    } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         console.error(
           "Error al iniciar sesión:",
