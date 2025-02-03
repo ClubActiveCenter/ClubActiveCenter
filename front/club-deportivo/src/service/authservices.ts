@@ -15,7 +15,7 @@ export const AuthService = {
 
       return response.data;
     } catch (error: any) {
-      throw new (error)
+      throw new (error) 
       if (axios.isAxiosError(error)) {
         console.error(
           "Error al iniciar sesión:",
