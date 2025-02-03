@@ -60,6 +60,14 @@ const Login = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-900">
+
+      <Link
+        href="/auth/login"
+        className="block px-3 py-2 hover:bg-gray-700 rounded"
+      >
+        Iniciar sesión
+      </Link>
+
       <form
         onSubmit={handleSubmit}
         className="bg-black bg-opacity-80 p-8 rounded-lg shadow-md w-full max-w-lg"
