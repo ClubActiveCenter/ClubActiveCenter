@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:3001/auth/SignIn"; // Cambia esta URL si es necesario
+const API_URL = "http://localhost:3001/auth/SignIn"; 
 
 export const AuthService = {
   async login(credentials: { email: string; password: string }) {
