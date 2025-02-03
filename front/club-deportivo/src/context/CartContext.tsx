@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { IProducts, ProductState } from "@/interface/IProducts";
 import { createContext, useContext, useState, useEffect } from "react";
