@@ -1,8 +1,42 @@
+"use client";
 /* eslint-disable @next/next/no-img-element */
+import ContactForm from "../../components/ContactForm/ContactForm";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Nosotros() {
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const handleFormSubmit = async (formData: { name: string; phone: string; email: string; message: string }) => {
+    setIsLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+
+    try {
+      const response = await fetch("http://localhost:3007/sendGrid/contacForm", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al enviar el formulario");
+      }
+
+      setSuccessMessage("¡Formulario enviado con éxito!");
+    } catch (err) {
+      setError("Hubo un error al enviar el formulario. Intenta nuevamente.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   return (
     <div className="bg-black text-white px-6 py-12 space-y-16">
       {/* Sección 1: Historia del gimnasio */}
@@ -101,7 +135,16 @@ export default function Nosotros() {
               Aprender más
             </button>
           </Link>
-        </div>
+        <div className="bg-black text-white px-6 py-12 space-y-16">
+      </div>
+    </div>
+      </div>
+      {/* Otras secciones de "Nosotros" */}
+      <div className="flex flex-col items-center">
+      <ContactForm onSubmit={handleFormSubmit} />
+        {isLoading && <p>Enviando...</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       </div>
     </div>
   );
