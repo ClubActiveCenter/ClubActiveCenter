@@ -17,6 +17,7 @@ import { SeederModule } from './Seeder/seeder.module';
 import { CartModule } from './Cart/cart.module';
 import { SpaceModule } from './Space/space.module';
 import { ActivityModule } from './Activity/activity.module';
+import { SendGridController } from './SendGrid/sendGrid.controller';
 
 @Module({
   imports: [
@@ -36,7 +37,7 @@ import { ActivityModule } from './Activity/activity.module';
     SpaceModule,
     ActivityModule,
   ],
-  controllers: [],
+  controllers: [SendGridController],
   providers: [{ provide: APP_GUARD, useClass: AuthGuard }],
 })
 export class AppModule {}

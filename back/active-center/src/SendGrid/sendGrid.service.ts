@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Inject } from '@nestjs/common';
 import * as sgMail from '@sendgrid/mail';
+import { ContactFormDTO } from './sengridDTO/contactForm.dto';
 
 interface OrderItem {
   name: string;
@@ -113,6 +114,26 @@ export class SendGridService {
   };
     
 
+  async contactMail(contactForm: ContactFormDTO): Promise<void>{
+
+    const {name, phone, email, message} = contactForm;
+    
+    const senderMail = "jumi.rc@hotmail.com";
+    const receiver = "jumicjv@gmail.com"
+    const mail = {
+      to: receiver,
+      from: senderMail,
+      subject: "Mail de consultas",
+      text: `Nombre: ${name}\nEmail: ${email}\nTeléfono: ${phone}\nMensaje: ${message}`
+    };
+
+    try {
+      await this.sgMail.send(mail);
+      console.log('Email enviado correctamente');
+    } catch (error) {
+      console.error('Error enviando email:', error.response.body.errors);
+  } 
+  }
   }
 
   // async Inquiry(inquiryObject: InquieyDTO): Promise<string>{
