@@ -16,13 +16,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { SpaceService } from './space.service';
-import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { Space } from 'src/Entities/Space.entity';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/User/UserDTO/Role.enum';
 import { RolesGuard } from 'src/Auth/Guard/roles.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateSpaceDto } from './dto/create-space.dto';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation } from '@nestjs/swagger';
 
 @Controller('space')
 export class SpaceController {
@@ -30,6 +30,7 @@ export class SpaceController {
 
   @Get('allSpaces')
   @SetMetadata('isPublic', true)
+  @ApiOperation({summary: 'Obtener espacios.', description: 'Este endpoint trae todos los espacios, paginados.'})
   async getSpaces(
     @Query('page') page: number,
     @Query('limit') limit: number,
@@ -51,16 +52,18 @@ export class SpaceController {
   @Roles(Role.admin)
   @UseGuards(RolesGuard)
   @ApiBearerAuth()
+  @ApiOperation({summary: 'Agregar espacio. (ADMIN)', description: 'Este endpoint permite agregar un espacio, solo para administradores.'})
   @ApiConsumes('multipart/form-data')
   @ApiBody({
-    description: 'Imagen del producto',
     schema: {
       type: 'object',
       properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
+        title: { type: 'string', description: 'Nombre del espacio', example: 'Alberca' },
+        price_hour: { type: 'number', description: 'Precio por hora', example: 25 },
+        description: { type: 'string', description: 'Descripción del espacio', example: 'Alberca olímpica.' },
+        details: { type: 'array', items: { type: 'string' }, description: 'Detalles del espacio', example: ['Cuenta con vestidores', 'Servicio de salvavidas'] },
+        characteristics: { type: 'array', items: { type: 'string' }, description: 'Características', example: ['Climatizada', 'Dimensiones olímpicas'] },
+        file: { type: 'string', format: 'binary', description: 'Imagen (JPG, PNG, WEBP, máx. 1.5MB)' },
       },
     },
   })
@@ -82,12 +85,14 @@ export class SpaceController {
 
   @Get(':id')
   @ApiBearerAuth()
+  @ApiOperation({summary: 'Obtener un espacio id', description: 'Este endpoint recibe un id y se encarga de buscar el espacio.'})
   getSpaceById(@Param('id', ParseUUIDPipe) id: string) {
     return this.spaceService.getSpaceById(id);
   }
 
   @Get()
   @ApiBearerAuth()
+  @ApiOperation({summary: 'Obtener un espacio por nombre', description: 'Este endpoint se encarga de recibir un nombre y buscar un espacio.'})
   getSpaceByName(@Body() name: string) {
     return this.spaceService.getSpaceByName(name);
   }
