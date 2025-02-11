@@ -1,5 +1,22 @@
 import { useState } from "react";
 
+interface FilterValues {
+  search: string;
+  category: string;
+  stock: string;
+  minPrice: string;
+  maxPrice: string;
+}
+
+interface Filters {
+  search: string;
+  category: string;
+  minPrice: number;
+  maxPrice: number;
+  page: number;
+  limit: number;
+}
+
 const categories = [
   "Todos", "Tenis", "Fútbol", "Ciclismo", "Gimnasio", "Movilidad", "Boxeo",
   "Running", "Baloncesto", "Ping Pong", "Accesorios", "Yoga", "Pádel", "Ropa",
@@ -7,8 +24,8 @@ const categories = [
   "Vóley", "Squash", "Bádminton"
 ];
 
-export default function ProductFilter({ onFilter }: { onFilter: (filters: any) => void }) {
-  const [filters, setFilters] = useState({
+export default function ProductFilter({ onFilter }: { onFilter: (filters: Filters) => void }) {
+  const [filters, setFilters] = useState<FilterValues>({
     search: "",
     category: "Todos",
     stock: "",
@@ -20,7 +37,14 @@ export default function ProductFilter({ onFilter }: { onFilter: (filters: any) =
     const { name, value } = e.target;
     const updatedFilters = { ...filters, [name]: value };
     setFilters(updatedFilters);
-    onFilter(updatedFilters);
+
+    onFilter({
+      ...updatedFilters,
+      minPrice: Number(updatedFilters.minPrice) || 0, 
+      maxPrice: Number(updatedFilters.maxPrice) || 1000, 
+      page: 1, 
+      limit: 8, 
+    });
   };
 
   return (

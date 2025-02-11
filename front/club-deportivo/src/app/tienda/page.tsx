@@ -6,18 +6,28 @@ import { IProducts } from "@/interface/IProducts";
 import Card from "@/components/Card/Card";
 import ProductFilter from "@/components/Filters/ProductFilter";
 
+// Definir la interfaz para los filtros
+interface Filters {
+  search: string;
+  category: string;
+  minPrice: number;
+  maxPrice: number;
+  page: number;
+  limit: number;
+}
+
 export default function Tienda() {
   const [products, setProducts] = useState<IProducts[]>([]);
   const [loading, setLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
-  
-  const [filters, setFilters] = useState({
+
+  const [filters, setFilters] = useState<Filters>({
     search: "",
     category: "Todos",
     minPrice: 0,
     maxPrice: 1000,
     page: 1,
-    limit: 8
+    limit: 8,
   });
 
   useEffect(() => {
@@ -28,12 +38,12 @@ export default function Tienda() {
       setTotalPages(totalPages);
       setLoading(false);
     };
-    
+
     fetchProducts();
   }, [filters]);
 
-  const handleFilter = (newFilters: any) => {
-    setFilters({ ...filters, ...newFilters, page: 1 }); 
+  const handleFilter = (newFilters: Filters) => {
+    setFilters({ ...filters, ...newFilters, page: 1 });
   };
 
   const handlePageChange = (newPage: number) => {
