@@ -8,7 +8,7 @@ import { useState } from "react";
 
 export default function Nosotros() {
 
-  const BACK_URL = "http://localhost:3007";
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +20,7 @@ export default function Nosotros() {
     setSuccessMessage(null);
 
     try {
-      const response = await axios.post(`${BACK_URL}/sendGrid/contacForm`, formData, {
+      const response = await axios.post(`${API_URL}/sendGrid/contacForm`, formData, {
         headers: { "Content-Type": "application/json" },
       });
       console.log(response.data)
