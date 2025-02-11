@@ -20,13 +20,13 @@ export default function ContactForm(props: FormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    props.onSubmit(formData); 
+    props.onSubmit(formData);
   };
 
   return (
-    <div className="bg-white text-black p-6 rounded-lg shadow-lg w-full max-w-md">
+    <div className="flex flex-col justify-center items-center gap-6 p-6 bg-gray-800 text-white rounded-lg shadow-md w-full max-w-lg mx-auto">
       <h2 className="text-lg font-bold text-center mb-4">Déjanos tu mensaje</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
         <input
           type="text"
           name="name"
@@ -34,7 +34,7 @@ export default function ContactForm(props: FormProps) {
           onChange={handleChange}
           placeholder="Nombre"
           required
-          className="p-2 border border-gray-300 rounded-md"
+          className="p-2 w-full max-w-xs rounded bg-gray-700 text-white border border-gray-600 text-center mx-auto"
         />
         <input
           type="tel"
@@ -43,7 +43,7 @@ export default function ContactForm(props: FormProps) {
           onChange={handleChange}
           placeholder="Teléfono"
           required
-          className="p-2 border border-gray-300 rounded-md"
+          className="p-2 w-full max-w-xs rounded bg-gray-700 text-white border border-gray-600 text-center mx-auto"
         />
         <input
           type="email"
@@ -52,7 +52,7 @@ export default function ContactForm(props: FormProps) {
           onChange={handleChange}
           placeholder="Correo electrónico"
           required
-          className="p-2 border border-gray-300 rounded-md"
+          className="p-2 w-full max-w-xs rounded bg-gray-700 text-white border border-gray-600 text-center mx-auto"
         />
         <textarea
           name="message"
@@ -60,9 +60,9 @@ export default function ContactForm(props: FormProps) {
           onChange={handleChange}
           placeholder="Escribe tu mensaje..."
           required
-          className="p-2 border border-gray-300 rounded-md h-32"
+          className="p-2 w-full max-w-xs rounded bg-gray-700 text-white border border-gray-600 text-left h-32 mx-auto"
         ></textarea>
-        <button type="submit" className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
+        <button type="submit" className="w-full max-w-xs mx-auto bg-black text-white py-2 rounded-md hover:bg-gray-800 transition">
           Enviar
         </button>
       </form>
