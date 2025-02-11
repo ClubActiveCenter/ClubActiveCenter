@@ -8,7 +8,7 @@ import { useState } from "react";
 
 export default function Nosotros() {
 
-  const BACK_URL = "http://localhost:3007";
+  const BACK_URL = "http://localhost:3001";
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
