@@ -100,7 +100,7 @@ export class ProductController {
   ) {
     try {
       const pageNumber = page ? parseInt(page) : 1;
-      const limitNumber = limit ? parseInt(limit) : 5;
+      const limitNumber = limit ? parseInt(limit) : 8;
 
       const filters: ProductFilters = {
         name,

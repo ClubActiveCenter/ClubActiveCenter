@@ -70,41 +70,36 @@ export class ProductService {
       const query = this.productsRepository
         .createQueryBuilder('product')
         .leftJoinAndSelect('product.category', 'category');
-      if (filters?.stock) {
+  
+      if (filters?.stock !== undefined) {
         query.andWhere('product.stock = :stock', { stock: filters.stock });
       }
       if (filters?.category) {
-        query.andWhere('category.name = :category', {
-          category: filters.category,
-        });
+        query.andWhere('category.name = :category', { category: filters.category });
       }
-      if (filters?.minPrice) {
-        query.andWhere('product.price >= :minPrice', {
-          minPrice: filters.minPrice,
-        });
+      if (filters?.minPrice !== undefined) {
+        query.andWhere('product.price >= :minPrice', { minPrice: filters.minPrice });
       }
-      if (filters?.maxPrice) {
-        query.andWhere('product.price <= :maxPrice', {
-          maxPrice: filters.maxPrice,
-        });
+      if (filters?.maxPrice !== undefined) {
+        query.andWhere('product.price <= :maxPrice', { maxPrice: filters.maxPrice });
       }
       if (filters?.name) {
-        query.andWhere('product.name ILIKE :name', {
-          name: `%${filters.name}%`,
-        });
+        query.andWhere('product.name ILIKE :name', { name: `%${filters.name}%` });
       }
-
-      const products = await query.getMany();
-
-      const start = (+page - 1) * +limit;
-      const end = start + +limit;
-      return products.slice(start, end);
+  
+      const totalProducts = await query.getCount();
+  
+      const products = await query.skip((page - 1) * limit).take(limit).getMany();
+  
+      return {
+        products,
+        totalPages: Math.ceil(totalProducts / limit), 
+      };
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Hubo un error al obtener los productos.',
-      );
+      throw new InternalServerErrorException('Hubo un error al obtener los productos.');
     }
   }
+  
 
   async getProductById(id: string) {
     try {
