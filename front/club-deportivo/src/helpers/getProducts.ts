@@ -1,7 +1,17 @@
 import { IProducts, ProductState } from "@/interface/IProducts";
 import axios from "axios";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3007";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
+interface IProductData {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+  img: string;
+  productStatus: string;
+}
 
 export const getProducts = async (filters: { 
   search: string; 
@@ -23,7 +33,7 @@ export const getProducts = async (filters: {
       }
     });
 
-    const products: IProducts[] = response.data.products.map((productData: any) => ({
+    const products: IProducts[] = response.data.products.map((productData: IProductData) => ({
       id: productData.id,
       name: productData.name,
       description: productData.description,
