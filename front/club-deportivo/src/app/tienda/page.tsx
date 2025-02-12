@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAdmin } from "@/context/AdminContext";
 import { getProducts } from "@/helpers/getProducts";
 import { IProducts } from "@/interface/IProducts";
 import Card from "@/components/Card/Card";
@@ -16,9 +19,8 @@ interface Filters {
 }
 
 export default function Tienda() {
-  const [products, setProducts] = useState<IProducts[]>([]);
+  const { products, getAllProducts, totalPages, currentPage } = useAdmin();
   const [loading, setLoading] = useState(false);
-  const [totalPages, setTotalPages] = useState(1);
 
   const [filters, setFilters] = useState<Filters>({
     search: "",
@@ -32,9 +34,13 @@ export default function Tienda() {
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
-      const { products, totalPages } = await getProducts(filters);
-      setProducts(products);
-      setTotalPages(totalPages);
+      try {
+        const { products, totalPages } = await getProducts(filters);
+        getAllProducts(products);
+        setFilters((prev) => ({ ...prev, totalPages }));
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
       setLoading(false);
     };
 
@@ -47,6 +53,38 @@ export default function Tienda() {
 
   const handlePageChange = (newPage: number) => {
     setFilters((prevFilters) => ({ ...prevFilters, page: newPage }));
+  };
+
+  const generatePageNumbers = () => {
+    const pageNumbers = [];
+    
+    for (let i = 1; i <= Math.min(3, totalPages); i++) {
+      pageNumbers.push(i);
+    }
+
+    if (totalPages > 3 && currentPage > 3) {
+      pageNumbers.push(-1);
+    }
+
+    if (totalPages > 3) {
+      const startPage = Math.max(4, currentPage - 1);
+      const endPage = Math.min(totalPages, currentPage + 1);
+
+      for (let i = startPage; i <= endPage; i++) {
+        if (!pageNumbers.includes(i)) {
+          pageNumbers.push(i);
+        }
+      }
+    }
+
+    if (totalPages > 3 && !pageNumbers.includes(totalPages)) {
+      if (currentPage < totalPages - 2) {
+        pageNumbers.push(-1);
+      }
+      pageNumbers.push(totalPages);
+    }
+
+    return pageNumbers;
   };
 
   return (
@@ -74,28 +112,48 @@ export default function Tienda() {
             {products.length > 0 ? (
               products.map((product) => <Card key={product.id} product={product} />)
             ) : (
-              <p className="text-center col-span-full text-gray-400">No se encontraron productos</p>
+              <p className="text-center col-span-full text-gray-400">
+                No se encontraron productos
+              </p>
             )}
           </div>
         )}
       </div>
 
       {/* 🔹 Paginación */}
-      <div className="flex justify-center my-6">
+      <div className="flex justify-center items-center space-x-2 mt-8 bg-black py-4">
         <button 
-          disabled={filters.page === 1} 
-          onClick={() => handlePageChange(filters.page - 1)} 
-          className="px-4 py-2 mx-2 bg-gray-700 rounded disabled:opacity-50"
+          onClick={() => handlePageChange(filters.page - 1)}
+          disabled={filters.page === 1}
+          className="px-3 py-1 bg-gray-800 text-gray-400 rounded disabled:opacity-50"
         >
-          Anterior
+          &lt;
         </button>
-        <span className="px-4 py-2 text-lg">{filters.page} / {totalPages}</span>
+
+        {generatePageNumbers().map((pageNum) => (
+          pageNum === -1 ? (
+            <span key="ellipsis" className="px-3 py-1 text-gray-400">...</span>
+          ) : (
+            <button
+              key={pageNum}
+              onClick={() => handlePageChange(pageNum)}
+              className={`px-4 py-2 rounded ${
+                pageNum === filters.page 
+                  ? "bg-blue-600 text-white" 
+                  : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+              }`}
+            >
+              {pageNum}
+            </button>
+          )
+        ))}
+
         <button 
-          disabled={filters.page >= totalPages} 
-          onClick={() => handlePageChange(filters.page + 1)} 
-          className="px-4 py-2 mx-2 bg-gray-700 rounded disabled:opacity-50"
+          onClick={() => handlePageChange(filters.page + 1)}
+          disabled={filters.page >= totalPages}
+          className="px-3 py-1 bg-gray-800 text-gray-400 rounded disabled:opacity-50"
         >
-          Siguiente
+          &gt;
         </button>
       </div>
     </div>
