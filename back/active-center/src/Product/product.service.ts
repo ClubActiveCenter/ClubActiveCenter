@@ -70,6 +70,8 @@ export class ProductService {
       const query = this.productsRepository
         .createQueryBuilder('product')
         .leftJoinAndSelect('product.category', 'category');
+  
+      // Aplicar filtros (por ejemplo, stock, categoría, precio, etc.)
       if (filters?.stock) {
         query.andWhere('product.stock = :stock', { stock: filters.stock });
       }
@@ -93,18 +95,28 @@ export class ProductService {
           name: `%${filters.name}%`,
         });
       }
-
-      const products = await query.getMany();
-
-      const start = (+page - 1) * +limit;
-      const end = start + +limit;
-      return products.slice(start, end);
+  
+      const totalProducts = await query.getCount();
+  
+      const products = await query
+        .skip((page - 1) * limit) 
+        .take(limit) 
+        .getMany();
+  
+      
+      const totalPages = Math.ceil(totalProducts / limit);
+  
+      return {
+        products,
+        totalPages,
+      };
     } catch (error) {
       throw new InternalServerErrorException(
         'Hubo un error al obtener los productos.',
       );
     }
   }
+  
 
   async getProductById(id: string) {
     try {
