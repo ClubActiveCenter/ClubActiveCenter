@@ -1,143 +1,117 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { useAdmin } from "@/context/AdminContext";
-import { useState, useEffect } from "react";
-import Card from "../../components/Card/Card";
+import { useEffect, useState } from "react";
+import { getProducts } from "@/helpers/getProducts";
+import { IProducts } from "@/interface/IProducts";
+import Card from "@/components/Card/Card";
+import ProductFilter from "@/components/Filters/FilterStore"; 
+
+interface Filters {
+  search: string;
+  category: string;
+  minPrice: number;
+  maxPrice: number;
+  page: number;
+  limit: number;
+}
 
 export default function Tienda() {
-  const { products, getAllProducts, totalPages, currentPage } = useAdmin();
+  const [products, setProducts] = useState<IProducts[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [totalPages, setTotalPages] = useState(1);
+  const [error, setError] = useState<string | null>(null); 
 
-  // Usar currentPage del contexto en lugar de un estado local separado
-  const [page, setPage] = useState(currentPage);
-  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState<Filters>({
+    search: "",
+    category: "Todos",
+    minPrice: 0,
+    maxPrice: 1000,
+    page: 1,
+    limit: 8, 
+  });
 
   useEffect(() => {
     const fetchProducts = async () => {
-      setLoading(true); // Activa el estado de carga antes de la petición
+      setLoading(true);
+      setError(null); 
+
       try {
-        await getAllProducts(page);
+        console.log("Filtros actuales:", filters); 
+
+        const { products, totalPages } = await getProducts(filters);
+
+        
+        console.log("Respuesta del backend:", { products, totalPages });
+
+        setProducts(products); 
+        setTotalPages(totalPages);
       } catch (error) {
-        alert("Error al obtener los productos");
+        console.error("Error fetching products:", error);
+        setError('Hubo un error al obtener los productos'); 
       } finally {
-        setLoading(false); // Desactiva el estado de carga después de la petición
+        setLoading(false); 
       }
     };
-  
+
     fetchProducts();
-  }, [page]);
+  }, [filters]); 
 
-  // 🔥 Si la página está cargando, muestra solo el mensaje de carga
-  if (loading)
-    return (
-      <div className="text-white text-2xl text-center py-20">Cargando...</div>
-    );
-
-
-  // Función para generar los números de página (sin cambios)
-  const generatePageNumbers = () => {
-    const pageNumbers = [];
-
-    // Mostrar primeras 3 páginas
-    for (let i = 1; i <= Math.min(3, totalPages); i++) {
-      pageNumbers.push(i);
-    }
-
-    // Añadir puntos suspensivos si hay más de 3 páginas
-    if (totalPages > 3 && currentPage > 3) {
-      pageNumbers.push(-1); // Usar -1 como indicador de puntos suspensivos
-    }
-
-    // Añadir páginas cercanas a la página actual
-    if (totalPages > 3) {
-      const startPage = Math.max(4, currentPage - 1);
-      const endPage = Math.min(totalPages, currentPage + 1);
-
-      for (let i = startPage; i <= endPage; i++) {
-        if (!pageNumbers.includes(i)) {
-          pageNumbers.push(i);
-        }
-      }
-    }
-
-    // Añadir última página si es necesario
-    if (totalPages > 3 && !pageNumbers.includes(totalPages)) {
-      if (currentPage < totalPages - 2) {
-        pageNumbers.push(-1); // Puntos suspensivos
-      }
-      pageNumbers.push(totalPages);
-    }
-
-    return pageNumbers;
+  const handleFilter = (newFilters: Filters) => {
+    setFilters({ ...newFilters, page: 1 }); 
   };
 
-  // Función para cambiar página que actualiza tanto el estado local como el contexto
-  const handlePageChange = async (newPage: number) => {
-    setPage(newPage);
-    await getAllProducts(newPage); // 👀 Hacer nueva petición con la página seleccionada
+  const handlePageChange = (newPage: number) => {
+    if (newPage > 0 && newPage <= totalPages) {
+      setFilters((prevFilters) => ({ ...prevFilters, page: newPage }));
+    }
   };
-  
 
   return (
-    <div>
-      <div className="bg-black text-white">
-        <header className="text-center py-8">
-          <h1 className="text-3xl md:text-[3rem] font-sans font-bold drop-shadow-lg">
-            Tienda de Productos
-          </h1>
-          <p className="text-gray-400 mt-4 text-xl">
-            Encuentra los mejores productos aquí. ¡Compra ahora!
-          </p>
-        </header>
-      </div>
+    <div className="bg-black text-white">
+      {/* Agregar el componente de filtro aquí */}
+      <ProductFilter onFilter={handleFilter} /> 
+
+      {/* 🔹 Mensaje de error */}
+      {error && (
+        <div className="text-center text-red-500 py-4">
+          <p>{error}</p>
+        </div>
+      )}
+
+      {/* 🔹 Productos */}
       <div className="bg-black w-full max-w-7xl mx-auto h-full">
-        <div className="bg-black grid items-center gap-8 md:grid-cols-3 lg:grid-cols-4 overflow-hidden">
-          {products.map((product) => (
-            <Card key={product.id} product={product} />
-          ))}
-        </div>
-
-        {/* Componente de Paginación */}
-        <div className="flex justify-center items-center space-x-2 mt-8 bg-black py-4">
-          {/* Botón de página anterior */}
-          <button
-            onClick={() => handlePageChange(Math.max(1, page - 1))}
-            disabled={page === 1}
-            className="px-3 py-1 bg-gray-800 text-gray-400 rounded disabled:opacity-50"
-          >
-            &lt;
-          </button>
-
-          {generatePageNumbers().map((pageNum) =>
-            pageNum === -1 ? (
-              <span key="ellipsis" className="px-3 py-1 text-gray-400">
-                ...
-              </span>
+        {loading ? (
+          <p className="text-center text-gray-400">Cargando productos...</p>
+        ) : (
+          <div className="grid items-center gap-8 md:grid-cols-3 lg:grid-cols-4 overflow-hidden">
+            {products.length > 0 ? (
+              products.map((product) => <Card key={product.id} product={product} />)
             ) : (
-              <button
-                key={pageNum}
-                onClick={() => handlePageChange(pageNum)}
-                className={`px-4 py-2 rounded ${
-                  pageNum === currentPage
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-800 text-gray-400 hover:bg-gray-700"
-                }`}
-              >
-                {pageNum}
-              </button>
-            )
-          )}
+              <p className="text-center col-span-full text-gray-400">No se encontraron productos</p>
+            )}
+          </div>
+        )}
+      </div>
 
-          {/* Botón de página siguiente */}
-          <button
-            onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
-            disabled={page === totalPages}
-            className="px-3 py-1 bg-gray-800 text-gray-400 rounded disabled:opacity-50"
-          >
-            &gt;
-          </button>
-        </div>
+      {/* 🔹 Paginación */}
+      <div className="flex justify-center my-6">
+        <button 
+          disabled={filters.page === 1} 
+          onClick={() => handlePageChange(filters.page - 1)} 
+          className="px-4 py-2 mx-2 bg-gray-700 rounded disabled:opacity-50"
+        >
+          Anterior
+        </button>
+        <span className="px-4 py-2 text-lg">
+          {filters.page} / {totalPages}
+        </span>
+        <button 
+          disabled={filters.page >= totalPages} 
+          onClick={() => handlePageChange(filters.page + 1)} 
+          className="px-4 py-2 mx-2 bg-gray-700 rounded disabled:opacity-50"
+        >
+          Siguiente
+        </button>
       </div>
     </div>
   );

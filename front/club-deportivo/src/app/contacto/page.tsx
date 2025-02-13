@@ -1,155 +1,107 @@
 'use client';
 
 import { useState } from 'react';
+import axios from 'axios';
 import Map from '@/components/Map';
+import ContactForm from '@/components/ContactForm/ContactForm';
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Aquí puedes manejar el envío del formulario
-    console.log('Form data:', formData);
-  };
+  const BACK_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const handleFormSubmit = async (formData: { name: string; phone: string; email: string; message: string }) => {
+    setIsLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+
+    try {
+      const response = await axios.post(`${BACK_URL}/sendGrid/contacForm`, formData, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      console.log('Respuesta del servidor:', response.data);
+      setSuccessMessage("¡Formulario enviado con éxito!");
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        console.error('Error al enviar formulario:', error.response);
+        setError(error.response.data.message || "Hubo un error al enviar el formulario.");
+      } else {
+        console.error('Error de red o desconocido:', error);
+        setError("Hubo un error al enviar el formulario. Intenta nuevamente.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black text-white">
       {/* Header Section */}
       <div className="bg-black text-white py-16 px-4">
         <div className="container mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-4">Contáctanos</h1>
-          <p className="text-xl max-w-2xl mx-auto">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Contáctanos</h1>
+          <p className="text-xl max-w-2xl mx-auto mb-8">
             Estamos aquí para responder tus preguntas y ayudarte a comenzar tu viaje fitness
           </p>
         </div>
       </div>
 
-      {/* Contact Information and Form Section */}
+      {/* Contact Form Section */}
       <div className="container mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-2 gap-12">
-          {/* Contact Information */}
-          <div className="text-white">
-            <h2 className="text-3xl font-bold mb-6">Información de Contacto</h2>
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Dirección</h3>
-                <p>Av. Principal #123</p>
-                <p>Ciudad de México, CDMX</p>
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Teléfono</h3>
-                <p>+52 (55) 1234-5678</p>
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Email</h3>
-                <p>info@clubactivecenter.com</p>
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Horario</h3>
-                <p>Lunes a Viernes: 6:00 AM - 10:00 PM</p>
-                <p>Sábados y Domingos: 8:00 AM - 8:00 PM</p>
-              </div>
-            </div>
-          </div>
+        <div className="space-y-8 text-center">
+          <h2 className="text-3xl font-semibold text-white"></h2>
+          <ContactForm onSubmit={handleFormSubmit} />
+          {isLoading && <p className="text-white">Enviando...</p>}
+          {error && <p className="text-red-500">{error}</p>}
+          {successMessage && <p className="text-green-500">{successMessage}</p>}
+        </div>
+      </div>
 
-          {/* Contact Form */}
-          <div className="bg-white rounded-lg p-6">
-            <h2 className="text-3xl font-bold mb-6 text-black">Envíanos un mensaje</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Nombre completo
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm p-2"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm p-2"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                  Teléfono
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm p-2"
-                />
-              </div>
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700">
-                  Mensaje
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  rows={4}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-black focus:ring-black sm:text-sm p-2"
-                  required
-                ></textarea>
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-black text-white py-2 px-4 rounded-md hover:bg-gray-800 transition-colors duration-300"
-              >
-                Enviar mensaje
-              </button>
-            </form>
+      {/* Footer - Contact Information Section */}
+      <div className="bg-gray-800 py-12 mt-16">
+        <div className="container mx-auto text-center text-white space-y-4">
+          <h3 className="text-2xl font-semibold"></h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div>
+              <h4 className="text-xl font-semibold mb-2">Dirección</h4>
+              <p>Av. Principal #123</p>
+              <p>Ciudad de México, CDMX</p>
+            </div>
+
+            <div>
+              <h4 className="text-xl font-semibold mb-2">Teléfono</h4>
+              <p>+52 (55) 1234-5678</p>
+            </div>
+
+            <div>
+              <h4 className="text-xl font-semibold mb-2">Email</h4>
+              <p>info@clubactivecenter.com</p>
+            </div>
+
+            <div>
+              <h4 className="text-xl font-semibold mb-2">Horario</h4>
+              <p>Lunes a Viernes: 6:00 AM - 10:00 PM</p>
+              <p>Sábados y Domingos: 8:00 AM - 8:00 PM</p>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Map Section */}
       <div className="container mx-auto px-4 py-12">
-        <h2 className="text-3xl font-bold mb-6 text-white">Ubicación</h2>
-        <div className="h-[400px] rounded-lg overflow-hidden">
+        <h2 className="text-3xl font-semibold mb-6 text-white">Ubicación</h2>
+        <div className="h-[500px] rounded-lg overflow-hidden">
           <Map
             center={{ lat: 19.4326, lng: -99.1332 }}
             zoom={15}
-            markers={[
-              {
-                lat: 19.4326,
-                lng: -99.1332,
-                title: "Club Active Center"
-              }
-            ]}
-          />
+            markers={[{
+              lat: 19.4326,
+              lng: -99.1332,
+              title: "Club Active Center"
+            }]}/>
         </div>
       </div>
     </div>
